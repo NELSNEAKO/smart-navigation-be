@@ -18,7 +18,9 @@ router.get('/', async (req, res) => {
     prisma.node.findMany(),
     prisma.edge.findMany(),
   ])
-  res.set('Cache-Control', 'public, max-age=0, s-maxage=60, stale-while-revalidate=300')
+  // Always revalidate: admins expect their edits to show immediately. (stale-while-revalidate
+  // let browsers serve the previous version.) The frontend's service worker handles offline.
+  res.set('Cache-Control', 'no-cache')
   res.json({ buildings, nodes, edges, generatedAt: new Date().toISOString() })
 })
 

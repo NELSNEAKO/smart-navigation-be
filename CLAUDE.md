@@ -61,6 +61,8 @@ Admin(email unique, passwordHash) · Building(name, description, photoUrl, lat, 
 ## API
 Public: `GET /api/health`, `GET /api/map` (buildings + floors + rooms + nodes + edges), `GET /api/events` (current and upcoming), `POST /api/logs`, `POST /api/auth/login`
 Admin: CRUD (`GET /`, `GET /:id`, `POST /`, `PUT /:id`, `DELETE /:id`) on `/api/buildings`, `/floors`, `/rooms`, `/nodes`, `/edges`, `/events`; `GET /api/events?all=1`; `GET /api/reports?days=30`
+- `POST /api/paths` (admin) saves a whole walkway in one request: `{ points: [{ id } | { lat, lng, label? }] }` in walking order; existing ids are reused (that is how paths join the network), consecutive points are connected unless already connected. `POST /api/paths/delete` `{ nodeIds, edgeIds }` is the matching undo.
+- `GET /api/map` is sent with `Cache-Control: no-cache` so admin edits show immediately.
 - `Edge.distanceM` is always computed here with haversine (never from the client), and recomputed when a node moves.
 - Edges are undirected; linking A-B when B-A exists returns 409.
 
