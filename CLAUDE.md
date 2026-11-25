@@ -11,7 +11,11 @@ Budget is zero: free tiers only, no paid map API, no AI features. Routing (Dijks
 
 ## Hosting notes
 - The frontend (Vercel) forwards `/api/*` to this service with a rewrite, so browsers see one origin and no CORS is needed. `CORS_ORIGIN` exists only for calling Render directly.
-- Render's free tier sleeps after ~15 min idle; the first request after that takes ~30-60 s. `GET /api/health` is the health check. The frontend's service worker caches `/api/map` so returning visitors still get the map instantly.
+- Live at https://smart-navigation-be.onrender.com (frontend: https://smart-navigation-fe-tau.vercel.app).
+- Render's free tier sleeps after ~15 min idle; the first request after that takes ~30-60 s. The frontend's service worker caches `/api/map` so returning visitors still get the map instantly.
+- `GET /api/health` is the fast health check (no database). `GET /api/health?db=1` also pings MongoDB and returns 503 with `dbHint` explaining the failure (bad URL, quotes, wrong password, network access) without exposing the connection string.
+- Render build command: `npm install && npm run build` (runs `prisma generate`). `prisma` is a regular dependency so it is installed even when dev dependencies are skipped.
+- Render env values must not include quotes (unlike `.env`).
 - Atlas Network Access must allow `0.0.0.0/0` (Render IPs are dynamic).
 
 ## Layout

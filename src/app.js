@@ -11,6 +11,7 @@ import edges from './routes/edges.js'
 import events from './routes/events.js'
 import logs from './routes/logs.js'
 import reports from './routes/reports.js'
+import health from './routes/health.js'
 
 const app = express()
 app.disable('x-powered-by')
@@ -35,7 +36,7 @@ if (allowed.length) {
 
 app.use(express.json({ limit: '100kb' }))
 
-app.get('/api/health', (req, res) => res.json({ ok: true }))
+app.use('/api/health', health)
 app.use('/api/auth', auth)
 app.use('/api/map', map)
 app.use('/api/buildings', buildings)
