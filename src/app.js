@@ -13,6 +13,7 @@ import logs from './routes/logs.js'
 import reports from './routes/reports.js'
 import health from './routes/health.js'
 import paths from './routes/paths.js'
+import popular from './routes/popular.js'
 
 const app = express()
 app.disable('x-powered-by')
@@ -46,6 +47,7 @@ app.use('/api/rooms', rooms)
 app.use('/api/nodes', nodes)
 app.use('/api/edges', edges)
 app.use('/api/paths', paths)
+app.use('/api/popular', popular)
 app.use('/api/events', events)
 app.use('/api/logs', logs)
 app.use('/api/reports', reports)

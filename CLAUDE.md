@@ -63,6 +63,9 @@ Public: `GET /api/health`, `GET /api/map` (buildings + floors + rooms + nodes + 
 Admin: CRUD (`GET /`, `GET /:id`, `POST /`, `PUT /:id`, `DELETE /:id`) on `/api/buildings`, `/floors`, `/rooms`, `/nodes`, `/edges`, `/events`; `GET /api/events?all=1`; `GET /api/reports?days=30`
 - `POST /api/paths` (admin) saves a whole walkway in one request: `{ points: [{ id } | { lat, lng, label? }] }` in walking order; existing ids are reused (that is how paths join the network), consecutive points are connected unless already connected. `POST /api/paths/delete` `{ nodeIds, edgeIds }` is the matching undo.
 - `GET /api/map` is sent with `Cache-Control: no-cache` so admin edits show immediately.
+- `Building.category` is an optional string validated against `BUILDING_CATEGORIES` in `routes/buildings.js` (academic, administration, library, food, health, sports, services, home-management); keep it in sync with the frontend's `src/lib/categories.js`.
+- `GET /api/popular` (public): top 6 most searched existing buildings in the last 30 days, `[{ buildingId, count }]`.
+- Prisma's `groupBy` `orderBy: { _count }` is not applied reliably on MongoDB: rank grouped rows in JS (see `popular.js`, `reports.js`).
 - `Edge.distanceM` is always computed here with haversine (never from the client), and recomputed when a node moves.
 - Edges are undirected; linking A-B when B-A exists returns 409.
 

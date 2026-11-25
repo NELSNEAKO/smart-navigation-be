@@ -1,13 +1,25 @@
 import { crudRouter } from '../lib/crud.js'
-import { str, lat, lng } from '../lib/validate.js'
+import { HttpError, str, lat, lng } from '../lib/validate.js'
+
+// Keep in sync with smart-navigation-fe/src/lib/categories.js
+export const BUILDING_CATEGORIES = ['academic', 'administration', 'library', 'food', 'health', 'sports', 'services', 'home-management']
 
 export default crudRouter('building', {
   orderBy: { name: 'asc' },
-  parse: (b, { partial }) => ({
-    name: str(b, 'name', { required: !partial, max: 120 }),
-    description: str(b, 'description', { max: 2000 }),
-    photoUrl: str(b, 'photoUrl', { max: 1000 }),
-    lat: lat(b, { required: !partial }),
-    lng: lng(b, { required: !partial }),
-  }),
+  parse: (b, { partial }) => {
+    // '' or null clears the category; undefined leaves it unchanged on update.
+    let category = b?.category
+    if (category === '') category = null
+    if (category !== undefined && category !== null && !BUILDING_CATEGORIES.includes(category)) {
+      throw new HttpError(400, `category must be one of: ${BUILDING_CATEGORIES.join(', ')}`)
+    }
+    return {
+      name: str(b, 'name', { required: !partial, max: 120 }),
+      description: str(b, 'description', { max: 2000 }),
+      photoUrl: str(b, 'photoUrl', { max: 1000 }),
+      category,
+      lat: lat(b, { required: !partial }),
+      lng: lng(b, { required: !partial }),
+    }
+  },
 })

@@ -22,6 +22,9 @@ model Building {
   name        String
   description String?
   photoUrl    String?
+  // One of BUILDING_CATEGORIES in src/routes/buildings.js (validated there, not a Prisma enum,
+  // so the list can change without a database migration).
+  category    String?
   lat         Float
   lng         Float
   floors      Floor[]
