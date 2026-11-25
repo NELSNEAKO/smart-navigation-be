@@ -1,0 +1,16 @@
+# Render Blueprint (optional: you can also create the Web Service by hand with these values).
+services:
+  - type: web
+    name: smart-navigation-be
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CORS_ORIGIN
+        sync: false

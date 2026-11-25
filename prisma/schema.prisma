@@ -1,0 +1,103 @@
+// Prisma 6.19.x + MongoDB. Do NOT upgrade to Prisma 7 (no MongoDB support yet).
+// Sync with: npx prisma db push
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+}
+
+model Building {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String?
+  photoUrl    String?
+  lat         Float
+  lng         Float
+  floors      Floor[]
+  entrances   Node[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Floor {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  buildingId String   @db.ObjectId
+  building   Building @relation(fields: [buildingId], references: [id], onDelete: Cascade)
+  label      String
+  order      Int      @default(0)
+  rooms      Room[]
+}
+
+enum RoomType {
+  classroom
+  office
+  restroom
+  lab
+}
+
+model Room {
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  floorId String   @db.ObjectId
+  floor   Floor    @relation(fields: [floorId], references: [id], onDelete: Cascade)
+  name    String
+  type    RoomType @default(classroom)
+  notes   String?
+}
+
+model Node {
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  lat        Float
+  lng        Float
+  // Unique when set (e.g. "gate1"). Enforced in server/routes/nodes.js rather than with
+  // @unique, because a MongoDB unique index rejects more than one node with no code (null).
+  code       String?
+  label      String?
+  // Set for building entrances.
+  buildingId String?   @db.ObjectId
+  building   Building? @relation(fields: [buildingId], references: [id], onDelete: SetNull)
+  edgesFrom  Edge[]    @relation("EdgeFrom")
+  edgesTo    Edge[]    @relation("EdgeTo")
+
+  @@index([code])
+}
+
+model Edge {
+  id        String @id @default(auto()) @map("_id") @db.ObjectId
+  fromId    String @db.ObjectId
+  from      Node   @relation("EdgeFrom", fields: [fromId], references: [id], onDelete: Cascade)
+  toId      String @db.ObjectId
+  to        Node   @relation("EdgeTo", fields: [toId], references: [id], onDelete: Cascade)
+  distanceM Float
+
+  @@unique([fromId, toId])
+}
+
+model Event {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  title     String
+  body      String
+  startsAt  DateTime
+  endsAt    DateTime?
+  createdAt DateTime  @default(now())
+}
+
+model SearchLog {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  query      String?
+  fromCode   String?
+  buildingId String?  @db.ObjectId
+  createdAt  DateTime @default(now())
+
+  @@index([createdAt])
+}
