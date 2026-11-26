@@ -15,6 +15,7 @@ import health from './routes/health.js'
 import paths from './routes/paths.js'
 import popular from './routes/popular.js'
 import campus from './routes/campus.js'
+import features from './routes/features.js'
 
 const app = express()
 app.disable('x-powered-by')
@@ -50,6 +51,7 @@ app.use('/api/edges', edges)
 app.use('/api/paths', paths)
 app.use('/api/popular', popular)
 app.use('/api/campus', campus)
+app.use('/api/features', features)
 app.use('/api/events', events)
 app.use('/api/logs', logs)
 app.use('/api/reports', reports)

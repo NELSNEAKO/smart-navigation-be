@@ -25,6 +25,9 @@ model Building {
   // One of BUILDING_CATEGORIES in src/routes/buildings.js (validated there, not a Prisma enum,
   // so the list can change without a database migration).
   category    String?
+  // Outline drawn by the admin on the campus map: { kind: 'rect' | 'poly', points: [{ lat, lng }] }.
+  // Optional; buildings without a shape show as a pin.
+  shape       Json?
   lat         Float
   lng         Float
   floors      Floor[]
@@ -113,5 +116,18 @@ model Campus {
   lat       Float
   lng       Float
   radiusM   Float
+  updatedAt DateTime @updatedAt
+}
+
+// Things drawn on the campus map besides buildings. Display only: routing uses Node/Edge.
+// kind: road (line with a width), crossing (short line drawn as a zebra), area (filled polygon,
+// e.g. field, parking, garden).
+model MapFeature {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  kind      String
+  name      String?
+  points    Json // [{ lat, lng }]
+  widthM    Float? // roads and crossings
+  createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

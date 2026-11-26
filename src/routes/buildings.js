@@ -1,5 +1,6 @@
 import { crudRouter } from '../lib/crud.js'
 import { HttpError, str, lat, lng } from '../lib/validate.js'
+import { buildingShape } from '../lib/shapes.js'
 
 // Keep in sync with smart-navigation-fe/src/lib/categories.js
 export const BUILDING_CATEGORIES = ['academic', 'administration', 'library', 'food', 'health', 'sports', 'services', 'home-management']
@@ -18,6 +19,7 @@ export default crudRouter('building', {
       description: str(b, 'description', { max: 2000 }),
       photoUrl: str(b, 'photoUrl', { max: 1000 }),
       category,
+      shape: buildingShape(b), // null clears it (MongoDB accepts plain null for Json fields)
       lat: lat(b, { required: !partial }),
       lng: lng(b, { required: !partial }),
     }
