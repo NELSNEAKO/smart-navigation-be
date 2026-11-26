@@ -7,3 +7,4 @@ dev-dist
 .vercel
 *.log
 admin-credentials.local.txt
+sample-data.local.json

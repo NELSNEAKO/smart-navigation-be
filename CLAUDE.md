@@ -65,6 +65,7 @@ Admin: CRUD (`GET /`, `GET /:id`, `POST /`, `PUT /:id`, `DELETE /:id`) on `/api/
 - `GET /api/map` is sent with `Cache-Control: no-cache` so admin edits show immediately.
 - `Building.category` is an optional string validated against `BUILDING_CATEGORIES` in `routes/buildings.js` (academic, administration, library, food, health, sports, services, home-management); keep it in sync with the frontend's `src/lib/categories.js`.
 - `GET /api/popular` (public): top 6 most searched existing buildings in the last 30 days, `[{ buildingId, count }]`.
+- Campus area: single `Campus` document `{ name?, lat, lng, radiusM }` (radius 30–5000 m). `GET /api/campus` (public), `PUT /api/campus` (admin, upsert). Also returned as `campus` in `GET /api/map` (null until set).
 - Prisma's `groupBy` `orderBy: { _count }` is not applied reliably on MongoDB: rank grouped rows in JS (see `popular.js`, `reports.js`).
 - `Edge.distanceM` is always computed here with haversine (never from the client), and recomputed when a node moves.
 - Edges are undirected; linking A-B when B-A exists returns 409.

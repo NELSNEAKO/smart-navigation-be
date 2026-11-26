@@ -5,7 +5,7 @@ const router = Router()
 
 // Everything the visitor app needs, in one payload. Search and routing run in the browser.
 router.get('/', async (req, res) => {
-  const [buildings, nodes, edges] = await Promise.all([
+  const [buildings, nodes, edges, campus] = await Promise.all([
     prisma.building.findMany({
       orderBy: { name: 'asc' },
       include: {
@@ -17,11 +17,12 @@ router.get('/', async (req, res) => {
     }),
     prisma.node.findMany(),
     prisma.edge.findMany(),
+    prisma.campus.findFirst(),
   ])
   // Always revalidate: admins expect their edits to show immediately. (stale-while-revalidate
   // let browsers serve the previous version.) The frontend's service worker handles offline.
   res.set('Cache-Control', 'no-cache')
-  res.json({ buildings, nodes, edges, generatedAt: new Date().toISOString() })
+  res.json({ buildings, nodes, edges, campus, generatedAt: new Date().toISOString() })
 })
 
 export default router

@@ -104,3 +104,14 @@ model SearchLog {
 
   @@index([createdAt])
 }
+
+// The campus area the app shows: a circle (centre + radius). Only one document is used.
+// Everything outside it is hidden on every map.
+model Campus {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String?
+  lat       Float
+  lng       Float
+  radiusM   Float
+  updatedAt DateTime @updatedAt
+}
